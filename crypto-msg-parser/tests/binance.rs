@@ -1248,6 +1248,11 @@ mod candlestick {
                 .unwrap()
                 .unwrap()
         );
+
+        let data = parse_candlestick(EXCHANGE_NAME, MarketType::Spot, raw_msg, MessageType::L2TopK).unwrap();
+
+        assert_eq!(1653818762502, data.timestamp);
+        assert_eq!("1m", data.period);
     }
 
     #[test]
@@ -1299,6 +1304,11 @@ mod candlestick {
                 .unwrap()
                 .unwrap()
         );
+
+        let data = parse_candlestick(EXCHANGE_NAME, MarketType::Spot, raw_msg, MessageType::L2TopK).unwrap();
+
+        assert_eq!(1653818962599, data.timestamp);
+        assert_eq!("1m", data.period);
     }
 
     #[test]
