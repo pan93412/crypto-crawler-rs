@@ -5,11 +5,11 @@ use super::{super::utils::calc_quantity_and_volume, messages::WebsocketMsg};
 
 use crate::{BboMsg, Order, OrderBookMsg, TradeMsg, TradeSide};
 
+use super::EXCHANGE_NAME;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use simple_error::SimpleError;
 use std::{cell::RefCell, collections::HashMap};
-use super::EXCHANGE_NAME;
 
 // https://www.gate.io/docs/delivery/ws/index.html#trades-subscription
 #[derive(Serialize, Deserialize)]
@@ -81,13 +81,13 @@ struct SwapRestL2SnapshotMsg {
 #[derive(Serialize, Deserialize)]
 #[allow(non_snake_case)]
 struct RawBboMsg {
-    t: Option<i64>,         // Order book update time in milliseconds
-    u: u64,                 // Order book update ID
-    s: String,              // Currency pair
-    b: String,              // best bid price
-    B: f64,                 // best bid amount
-    a: String,              // best ask price
-    A: f64,                 // best ask amount
+    t: Option<i64>, // Order book update time in milliseconds
+    u: u64,         // Order book update ID
+    s: String,      // Currency pair
+    b: String,      // best bid price
+    B: f64,         // best bid amount
+    a: String,      // best ask price
+    A: f64,         // best ask amount
     #[serde(flatten)]
     extra: HashMap<String, Value>,
 }

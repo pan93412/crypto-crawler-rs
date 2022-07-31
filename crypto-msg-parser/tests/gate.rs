@@ -744,7 +744,7 @@ mod bbo {
             "BTC_USD",
             extract_symbol(EXCHANGE_NAME, MarketType::InverseSwap, raw_msg).unwrap()
         );
-        
+
         let bbo_msg = parse_bbo(EXCHANGE_NAME, MarketType::InverseSwap, raw_msg, None).unwrap();
 
         assert_eq!(MessageType::BBO, bbo_msg.msg_type);
@@ -758,7 +758,7 @@ mod bbo {
         assert_eq!(Some(99.0), bbo_msg.ask_quantity_contract);
 
         assert_eq!(31653.9, bbo_msg.bid_price);
-        assert_eq!(19485.0 *1.0 / 31653.9, bbo_msg.bid_quantity_base);
+        assert_eq!(19485.0 * 1.0 / 31653.9, bbo_msg.bid_quantity_base);
         assert_eq!(19485.0 * 1.0, bbo_msg.bid_quantity_quote);
         assert_eq!(Some(19485.0), bbo_msg.bid_quantity_contract);
     }
@@ -787,12 +787,18 @@ mod bbo {
 
         assert_eq!(31709.3, bbo_msg.ask_price);
         assert_eq!(round(56231.0 * 0.0001), bbo_msg.ask_quantity_base);
-        assert_eq!(round(56231.0 * 0.0001 * 31709.3), bbo_msg.ask_quantity_quote);
+        assert_eq!(
+            round(56231.0 * 0.0001 * 31709.3),
+            bbo_msg.ask_quantity_quote
+        );
         assert_eq!(Some(56231.0), bbo_msg.ask_quantity_contract);
 
         assert_eq!(31709.2, bbo_msg.bid_price);
         assert_eq!(round(119926.0 * 0.0001), bbo_msg.bid_quantity_base);
-        assert_eq!(round(119926.0 * 0.0001 * 31709.2), bbo_msg.bid_quantity_quote);
+        assert_eq!(
+            round(119926.0 * 0.0001 * 31709.2),
+            bbo_msg.bid_quantity_quote
+        );
         assert_eq!(Some(119926.0), bbo_msg.bid_quantity_contract);
     }
 }

@@ -4,8 +4,8 @@ mod gate_spot_current;
 mod gate_swap;
 mod messages;
 
-use crypto_market_type::MarketType;
 use crate::{BboMsg, OrderBookMsg, TradeMsg};
+use crypto_market_type::MarketType;
 use simple_error::SimpleError;
 
 const EXCHANGE_NAME: &str = "gate";

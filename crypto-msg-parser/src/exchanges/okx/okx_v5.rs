@@ -372,30 +372,29 @@ pub(super) fn parse_l2(
     Ok(orderbooks)
 }
 
-pub(crate) fn parse_l2_topk(
-    market_type: MarketType,
-    msg: &str,
-) -> Result<Vec<OrderBookMsg>, SimpleError> {
-    parse_l2(market_type, msg)
-}
+// Not being used currently.
+//
+// pub(crate) fn parse_l2_topk(
+//     market_type: MarketType,
+//     msg: &str,
+// ) -> Result<Vec<OrderBookMsg>, SimpleError> {
+//     parse_l2(market_type, msg)
+// }
 
-pub(crate) fn parse_bbo(
-    market_type: MarketType,
-    msg: &str,
-) -> Result<BboMsg, SimpleError> {
-    if market_type == MarketType::InverseSwap || market_type == MarketType::LinearSwap{
+pub(crate) fn parse_bbo(market_type: MarketType, msg: &str) -> Result<BboMsg, SimpleError> {
+    if market_type == MarketType::InverseSwap || market_type == MarketType::LinearSwap {
         parse_bbo_swap(market_type, msg)
-    } else if market_type == MarketType::Spot || market_type == MarketType::InverseFuture || market_type == MarketType::LinearFuture {
+    } else if market_type == MarketType::Spot
+        || market_type == MarketType::InverseFuture
+        || market_type == MarketType::LinearFuture
+    {
         parse_bbo_book(market_type, msg)
     } else {
         Err(SimpleError::new("Not implemented"))
     }
 }
-pub(crate) fn parse_bbo_swap(
-    market_type: MarketType,
-    msg: &str,
-) -> Result<BboMsg, SimpleError> {
-    let mut ws_msg =  serde_json::from_str::<WebBboMsg<RawBboSwapMsg>>(msg).map_err(|_e| {
+pub(crate) fn parse_bbo_swap(market_type: MarketType, msg: &str) -> Result<BboMsg, SimpleError> {
+    let mut ws_msg = serde_json::from_str::<WebBboMsg<RawBboSwapMsg>>(msg).map_err(|_e| {
         SimpleError::new(format!(
             "Failed to deserialize {} to WebBboMsg<RawBboSwapMsg>",
             msg
@@ -408,29 +407,17 @@ pub(crate) fn parse_bbo_swap(
     let timestamp = bbo_msg_vec.ts.parse::<i64>().unwrap();
     let pair = crypto_pair::normalize_pair(symbol, EXCHANGE_NAME).unwrap();
 
-    let price =  bbo_msg_vec.askPx.as_str().parse::<f64>().unwrap();
+    let ask_price = bbo_msg_vec.askPx.as_str().parse::<f64>().unwrap();
     let quantity = bbo_msg_vec.askSz.as_str().parse::<f64>().unwrap();
-    let ask_price = price.clone();
 
-    let (ask_quantity_base, ask_quantity_quote, ask_quantity_contract) = calc_quantity_and_volume(
-        EXCHANGE_NAME,
-        market_type,
-        &pair,
-        price,
-        quantity,
-    );
+    let (ask_quantity_base, ask_quantity_quote, ask_quantity_contract) =
+        calc_quantity_and_volume(EXCHANGE_NAME, market_type, &pair, ask_price, quantity);
 
-    let price =  bbo_msg_vec.bidPx.as_str().parse::<f64>().unwrap();
+    let bid_price = bbo_msg_vec.bidPx.as_str().parse::<f64>().unwrap();
     let quantity = bbo_msg_vec.bidSz.as_str().parse::<f64>().unwrap();
-    let bid_price = price.clone();
 
-    let (bid_quantity_base, bid_quantity_quote, bid_quantity_contract) = calc_quantity_and_volume(
-        EXCHANGE_NAME,
-        market_type,
-        &pair,
-        price,
-        quantity,
-    );
+    let (bid_quantity_base, bid_quantity_quote, bid_quantity_contract) =
+        calc_quantity_and_volume(EXCHANGE_NAME, market_type, &pair, bid_price, quantity);
 
     let bbo_msg = BboMsg {
         exchange: EXCHANGE_NAME.to_string(),
@@ -454,11 +441,8 @@ pub(crate) fn parse_bbo_swap(
     Ok(bbo_msg)
 }
 
-pub(crate) fn parse_bbo_book(
-    market_type: MarketType,
-    msg: &str,
-) -> Result<BboMsg, SimpleError> {
-    let mut ws_msg =  serde_json::from_str::<WebBboMsg<RawOrderbookMsg>>(msg).map_err(|_e| {
+pub(crate) fn parse_bbo_book(market_type: MarketType, msg: &str) -> Result<BboMsg, SimpleError> {
+    let mut ws_msg = serde_json::from_str::<WebBboMsg<RawOrderbookMsg>>(msg).map_err(|_e| {
         SimpleError::new(format!(
             "Failed to deserialize {} to WebBboMsg<RawOrderbookMsg>",
             msg
@@ -471,30 +455,19 @@ pub(crate) fn parse_bbo_book(
     let bbo_msg_vec = ws_msg.data.get_mut(0).unwrap();
     let timestamp = bbo_msg_vec.ts.parse::<i64>().unwrap();
     let pair = crypto_pair::normalize_pair(symbol, EXCHANGE_NAME).unwrap();
+
     // Order book on sell side
-    let price =  bbo_msg_vec.asks[0][0].parse::<f64>().unwrap();
+    let ask_price = bbo_msg_vec.asks[0][0].parse::<f64>().unwrap();
     let quantity = bbo_msg_vec.asks[0][1].parse::<f64>().unwrap();
-    let ask_price = price.clone();
 
-    let (ask_quantity_base, ask_quantity_quote, ask_quantity_contract) = calc_quantity_and_volume(
-        EXCHANGE_NAME,
-        market_type,
-        &pair,
-        price,
-        quantity,
-    );
+    let (ask_quantity_base, ask_quantity_quote, ask_quantity_contract) =
+        calc_quantity_and_volume(EXCHANGE_NAME, market_type, &pair, ask_price, quantity);
     // Order book on buy side
-    let price = bbo_msg_vec.bids[0][0].parse::<f64>().unwrap();
+    let bid_price = bbo_msg_vec.bids[0][0].parse::<f64>().unwrap();
     let quantity = bbo_msg_vec.bids[0][1].parse::<f64>().unwrap();
-    let bid_price = price.clone();
 
-    let (bid_quantity_base, bid_quantity_quote, bid_quantity_contract) = calc_quantity_and_volume(
-        EXCHANGE_NAME,
-        market_type,
-        &pair,
-        price,
-        quantity,
-    );
+    let (bid_quantity_base, bid_quantity_quote, bid_quantity_contract) =
+        calc_quantity_and_volume(EXCHANGE_NAME, market_type, &pair, bid_price, quantity);
 
     let bbo_msg = BboMsg {
         exchange: EXCHANGE_NAME.to_string(),

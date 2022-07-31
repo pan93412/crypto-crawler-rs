@@ -11,6 +11,8 @@ use serde_json::Value;
 
 pub(super) const EXCHANGE_NAME: &str = "okx";
 
+pub(crate) use okx_v5::parse_bbo;
+
 pub(crate) fn extract_symbol(_market_type: MarketType, msg: &str) -> Result<String, SimpleError> {
     let obj = serde_json::from_str::<HashMap<String, Value>>(msg).map_err(SimpleError::from)?;
     if obj.contains_key("arg") && obj.contains_key("data") {

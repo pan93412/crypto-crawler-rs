@@ -831,7 +831,7 @@ mod bbo {
     #[test]
     fn spot() {
         let raw_msg = r#"{"arg":{"channel":"bbo-tbt","instId":"BTC-USDT"},"data":[{"asks":[["31774.7","0.14368878","0","3"]],"bids":[["31774.6","0.3392211","0","3"]],"ts":"1654032991947"}]}"#;
-        
+
         let bbo_msg = &parse_bbo(EXCHANGE_NAME, MarketType::Spot, raw_msg, None).unwrap();
 
         assert_eq!(
@@ -859,7 +859,6 @@ mod bbo {
         assert_eq!(0.3392211, bbo_msg.bid_quantity_base);
         assert_eq!(round(31774.6 * 0.3392211), bbo_msg.bid_quantity_quote);
         assert_eq!(None, bbo_msg.bid_quantity_contract);
-
     }
 
     #[test]
@@ -878,7 +877,7 @@ mod bbo {
         );
 
         let bbo_msg = &parse_bbo(EXCHANGE_NAME, MarketType::InverseFuture, raw_msg, None).unwrap();
-        
+
         assert_eq!(MessageType::BBO, bbo_msg.msg_type);
         assert_eq!("BTC-USD-220624", bbo_msg.symbol);
         assert_eq!(1654033096078, bbo_msg.timestamp);
@@ -892,7 +891,6 @@ mod bbo {
         assert_eq!(38.0 * 100.0 / 31769.8, bbo_msg.bid_quantity_base);
         assert_eq!(38.0 * 100.0, bbo_msg.bid_quantity_quote);
         assert_eq!(Some(38.0), bbo_msg.bid_quantity_contract);
-
     }
 
     #[test]
@@ -924,7 +922,6 @@ mod bbo {
         assert_eq!(round(2.0 * 0.01), bbo_msg.bid_quantity_base);
         assert_eq!(round(0.01 * 2.0 * 31850.4), bbo_msg.bid_quantity_quote);
         assert_eq!(Some(2.0), bbo_msg.bid_quantity_contract);
-
     }
 
     #[test]
@@ -957,7 +954,6 @@ mod bbo {
         assert_eq!(1967.0 * 100.0 / 31771.5, bbo_msg.bid_quantity_base);
         assert_eq!(1967.0 * 100.0, bbo_msg.bid_quantity_quote);
         assert_eq!(Some(1967.0), bbo_msg.bid_quantity_contract);
-
     }
 
     #[test]
@@ -1007,7 +1003,7 @@ mod bbo {
             extract_symbol(EXCHANGE_NAME, MarketType::LinearSwap, raw_msg).unwrap()
         );
         // let bbo_msg = &parse_bbo(EXCHANGE_NAME, MarketType::LinearSwap, raw_msg, None).unwrap();
-        
+
         // assert_eq!(MessageType::BBO, bbo_msg.msg_type);
         // assert_eq!("BTC-USD-220624-50000-C", bbo_msg.symbol);
         // assert_eq!(1654033343415, bbo_msg.timestamp);

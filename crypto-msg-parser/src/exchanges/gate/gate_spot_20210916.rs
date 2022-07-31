@@ -3,11 +3,11 @@ use crypto_msg_type::MessageType;
 
 use crypto_message::{Order, OrderBookMsg, TradeMsg, TradeSide};
 
+use super::EXCHANGE_NAME;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use simple_error::SimpleError;
 use std::collections::HashMap;
-use super::EXCHANGE_NAME;
 
 // https://www.gate.io/docs/websocket/index.html#trades-subscription
 #[derive(Serialize, Deserialize)]

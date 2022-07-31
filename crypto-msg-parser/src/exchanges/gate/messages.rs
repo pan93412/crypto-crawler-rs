@@ -21,7 +21,7 @@ pub(super) struct WebsocketMsg<T: Sized> {
 #[derive(Serialize, Deserialize)]
 #[allow(non_snake_case)]
 pub(super) struct RawBboMsg {
-    pub t: Option<i64>,         // Order book update time in milliseconds
+    pub t: Option<i64>, // Order book update time in milliseconds
     pub u: u64,         // Order book update ID
     pub s: String,      // Currency pair
     pub b: String,      // best bid price

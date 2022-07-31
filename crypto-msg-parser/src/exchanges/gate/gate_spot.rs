@@ -1,15 +1,14 @@
-
 use crate::{BboMsg, OrderBookMsg, TradeMsg};
 
+use crypto_market_type::MarketType;
+use crypto_msg_type::MessageType;
 use serde_json::Value;
 use simple_error::SimpleError;
 use std::collections::HashMap;
-use crypto_market_type::MarketType;
-use crypto_msg_type::MessageType;
 
 use super::super::utils::calc_quantity_and_volume;
-use super::{gate_spot_20210916, gate_spot_current, messages::WebsocketMsg, messages::RawBboMsg};
 use super::EXCHANGE_NAME;
+use super::{gate_spot_20210916, gate_spot_current, messages::RawBboMsg, messages::WebsocketMsg};
 
 pub(super) fn parse_bbo(
     market_type: MarketType,
