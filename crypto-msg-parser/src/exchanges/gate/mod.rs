@@ -4,11 +4,12 @@ mod gate_spot_current;
 mod gate_swap;
 mod messages;
 
+use crypto_msg_type::MessageType;
 use crypto_market_type::MarketType;
-
-use crate::{OrderBookMsg, TradeMsg};
-
+use crate::{BboMsg, CandleStickMsg, OrderBookMsg, TradeMsg};
 use simple_error::SimpleError;
+
+const EXCHANGE_NAME: &str = "gate";
 
 pub(crate) fn extract_symbol(market_type: MarketType, msg: &str) -> Result<String, SimpleError> {
     if market_type == MarketType::Spot {
@@ -52,5 +53,33 @@ pub(crate) fn parse_l2(
         )
     } else {
         gate_swap::parse_l2(market_type, msg)
+    }
+}
+
+pub(crate) fn parse_bbo(
+    market_type: MarketType,
+    msg: &str,
+    received_at: Option<i64>,
+) -> Result<BboMsg, SimpleError> {
+    if market_type == MarketType::Spot {
+        gate_spot::parse_bbo(market_type, msg, received_at)
+    } else if market_type == MarketType::InverseSwap || market_type == MarketType::LinearSwap {
+        gate_swap::parse_bbo(market_type, msg, received_at)
+    } else {
+        Err(SimpleError::new("Not implemented"))
+    }
+}
+
+pub(crate) fn parse_candlestick(
+    market_type: MarketType,
+    msg: &str,
+    message_type: MessageType
+) -> Result<KlineMsg, SimpleError> {
+    if market_type == MarketType::EuropeanOption {
+        Err(SimpleError::new("Not implemented"))
+    } else if market_type == MarketType::InverseSwap {
+        gate_swap::parse_candlestick(market_type, msg, message_type)
+    } else {
+        gate_spot_current::parse_candlestick(market_type, msg, message_type)
     }
 }

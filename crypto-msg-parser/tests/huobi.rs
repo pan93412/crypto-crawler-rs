@@ -1095,6 +1095,11 @@ mod candlestick {
             "btcusdt",
             extract_symbol(EXCHANGE_NAME, MarketType::Spot, raw_msg).unwrap()
         );
+
+        let data = parse_candlestick(EXCHANGE_NAME, MarketType::Spot, raw_msg, MessageType::L2TopK).unwrap();
+
+        assert_eq!(1654081322624, data.timestamp);
+        assert_eq!("15M", data.period);
     }
 
     #[test]
